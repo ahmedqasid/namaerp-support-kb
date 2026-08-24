@@ -1,4 +1,4 @@
-# Nama AI Support
+# Nama ERP Support Knowledge Base
 
 Ask questions about Nama ERP and get answers from the official documentation and data model,
 using [Claude Code](https://claude.com/claude-code).
@@ -14,8 +14,8 @@ Clone **with submodules** — the `--recurse-submodules` flag is required, other
 folders come down empty:
 
 ```bash
-git clone --recurse-submodules https://github.com/<org>/nama-ai-support.git
-cd nama-ai-support
+git clone --recurse-submodules https://github.com/ahmedqasid/namaerp-support-kb.git
+cd namaerp-support-kb
 ```
 
 Already cloned without it? Fix it with:

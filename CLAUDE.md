@@ -1,4 +1,4 @@
-# Nama ERP — AI Support Knowledge Base
+# Nama ERP Support Knowledge Base
 
 This repo exists for one purpose: **Nama technical support staff run Claude Code here and ask
 questions about Nama ERP.** Everything below is about answering those questions well.
@@ -138,7 +138,7 @@ Always confirm a name against `llms.txt` or `index.json` before assuming the fil
 cat namaerp-dm/docs/public/dm-json/Account.json
 ```
 
-**Find which entities reference a given entity** (the item master is `InvItem`, not `Item`):
+**Find which entities reference a given entity** (e.g. everything pointing at the item master):
 
 ```bash
 grep -l '"refTo" : "InvItem"' namaerp-dm/docs/public/dm-json/*.json
