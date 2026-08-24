@@ -1,0 +1,14 @@
+# Node / VitePress build output (submodules are docs sites)
+node_modules/
+.vitepress/cache/
+.vitepress/dist/
+dist/
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Local Claude Code state (keep CLAUDE.md and .claude/settings.json tracked)
+.claude/settings.local.json

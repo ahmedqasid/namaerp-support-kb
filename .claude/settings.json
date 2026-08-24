@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(./**)",
+      "Glob",
+      "Grep",
+      "Bash(grep:*)",
+      "Bash(rg:*)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(wc:*)",
+      "Bash(sort:*)",
+      "Bash(uniq:*)",
+      "Bash(git status:*)",
+      "Bash(git log:*)",
+      "Bash(git submodule update:*)"
+    ],
+    "deny": [
+      "Edit(./namaerp-docs/**)",
+      "Write(./namaerp-docs/**)",
+      "Edit(./namaerp-dm/**)",
+      "Write(./namaerp-dm/**)"
+    ]
+  }
+}
