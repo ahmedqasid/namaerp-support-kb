@@ -162,6 +162,12 @@ always add `--exclude-dir=ar` unless you specifically want Arabic, and prefer `g
 
 ---
 
+## SQL dialect
+
+Nama ERP always runs on **Microsoft SQL Server**. Every query you write — for a customer, a
+support investigation, or an example in an answer — must be **T-SQL**. Never write MySQL,
+PostgreSQL, or Oracle syntax unless the user explicitly asks for that dialect.
+
 ## How to answer
 
 1. **Ground every answer in a file you actually read.** Never answer Nama questions from prior
