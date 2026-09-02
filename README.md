@@ -50,14 +50,16 @@ click, and includes a `docs.namasoft.com` link you can forward to the customer.
 ## Keeping it up to date
 
 The submodules are pinned to a specific commit, so everyone on the team sees the same content.
-To pull the latest documentation:
+Those pins move forward on their own: every deploy of docs.namasoft.com or dm.namasoft.com
+advances its own pin here to the commit it just published. To pick that up:
 
 ```bash
 git pull
 git submodule update --init --recursive
 ```
 
-To move the pins forward to the newest docs (then commit and push so the team gets them):
+That leaves you level with what the two sites are actually serving. The manual form below is
+only needed to go further — to content that is pushed but not yet deployed:
 
 ```bash
 git submodule update --remote --merge

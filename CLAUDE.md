@@ -207,11 +207,43 @@ PostgreSQL, or Oracle syntax unless the user explicitly asks for that dialect.
 - Don't treat the `ar/` mirror as a separate source of truth. It is a translation; if English
   and Arabic disagree, flag the discrepancy rather than silently picking one.
 
+## Connecting to a customer's ERP over MCP
+
+If you are asked to "add an MCP server" for a URL that is a Nama installation —
+`https://<customer>.namasoft.com`, a customer's own domain, an IP and port — **do not guess the
+endpoint path or the auth header, and do not probe the server for one.** Nama's built-in MCP
+server is documented: read `namaerp-docs/docs/modules/ai/ai-mcp-server.md` and follow it.
+
+The short version, for `.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "nama-erp": {
+      "type": "http",
+      "url": "https://<customer-server>/basic-services/mcp",
+      "headers": { "X-API-Key": "<client-secret>" }
+    }
+  }
+}
+```
+
+The path is `/basic-services/mcp` — not `/mcp`, `/erp/...`, `/api/...` or `/sse` — and the
+transport is Streamable HTTP, not SSE (older versions exposed `/basic-services/mcp/sse`; that
+endpoint is gone). The key is the **Client Secret** of an **API Credentials** record in the
+customer's own system, so ask for it rather than inventing a placeholder. A 404 on the correct
+URL usually means the AI module is not installed on that server, not that the path is wrong.
+
 ## Keeping content fresh
 
-The submodules are pinned to a commit. If an answer looks stale, or the user says "this was
-added in a recent release", update them:
+The submodules are pinned to a commit, and the pins move on their own: each deploy of
+docs.namasoft.com and dm.namasoft.com advances its own pin here to the commit it just
+published. A plain pull is therefore enough to be level with the live sites:
 
 ```bash
-git submodule update --remote --merge
+git pull
+git submodule update --init --recursive
 ```
+
+Only reach for `git submodule update --remote --merge` to get content that is newer than the
+last deploy — pushed to namaerp-docs or namaerp-dm, but not yet published.
