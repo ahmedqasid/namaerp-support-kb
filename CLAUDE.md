@@ -122,6 +122,42 @@ grep -ril "الفترات المحاسبية" namaerp-docs/docs/ar --include='*.
 Then read the **English** twin of whatever you find (drop `/ar` from the path) if you need to
 reason over it — the English prose is easier to quote precisely — but answer in Arabic.
 
+**Find the page that owns an entity type — check the frontmatter first.** Pages under
+`docs/modules/` and `docs/platform/` declare what they document in a YAML block at the top:
+
+```yaml
+---
+entities: [AccountsChart, AccountCategory, AccountTaxCategory]
+menu: Accounting → Master Files → Accounts Chart
+---
+```
+
+So the fastest route from an entity type to its guide is a grep of those blocks, not a full-text
+search of the prose (the prose deliberately avoids internal names, so `SalesInvoice` often does not
+appear on the page that explains sales invoices at all):
+
+```bash
+grep -rl "^entities:.*\bSrvCJobOrder\b" namaerp-docs/docs --include='*.md' --exclude-dir=ar
+```
+
+Two things to know about these keys:
+
+- **`entities` is the same in both languages**; **`menu` is not.** English pages separate the
+  segments with `→`, the Arabic mirrors with `←` (right-to-left), with the segments in the same
+  order. Quote the `menu` value verbatim when telling a support person where to click — it is the
+  system's own wording, odd casing and all (`Point of sale`, `Recuring Document`, `ai`).
+- **A page with no `entities` key is not a bug.** Concept pages, glossaries, FAQs and report
+  catalogues have no screen behind them and are deliberately left blank. Coverage is roughly 540 of
+  the 620 pages under `modules/` and `platform/`; everything outside those two folders has none yet.
+
+**`namaerp-docs/docs/public/llms.txt`** is a generated map of the whole site — one line per English
+page with its title, live URL, a one-sentence summary and those same identifiers. Grep it when you
+want to find the right page by topic before opening anything:
+
+```bash
+grep -i "depreciation" namaerp-docs/docs/public/llms.txt
+```
+
 **Find an entity by name, English label, or Arabic label:**
 
 ```bash
@@ -207,6 +243,34 @@ PostgreSQL, or Oracle syntax unless the user explicitly asks for that dialect.
 - Don't treat the `ar/` mirror as a separate source of truth. It is a translation; if English
   and Arabic disagree, flag the discrepancy rather than silently picking one.
 
+## Offer a feedback note for the Nama team
+
+Nama's documentation and MCP tooling improve from what support staff hit in real tickets, and the
+user will rarely think to report anything. So keep note of what you run into — quietly, while you
+work.
+
+Anything that would make the next person's answer better is worth noting. Some examples, not a
+checklist:
+
+- the documentation says one thing and the system does another
+- something a support person would consider basic is not documented anywhere
+- two pages contradict each other, or a page contradicts the data model
+- you could not answer a reasonable question because the information is not here
+- an MCP tool was missing, refused something it should have allowed, or took five calls to tell
+  you what one should have
+
+**Do not interrupt the work with this.** Say nothing while the user is still asking questions. When
+the conversation looks finished — their question is answered and nothing new has come back — offer
+once, in a single line: that you noticed something worth reporting, and would they like a short
+issue report to send to Nama. If they say yes, write it out ready to paste (what you were trying to
+find out, what the docs say, what the system actually does, and a one-line suggested fix) and tell
+them it goes to **ai@namasoft.com**. If they say no or let it pass, drop it and do not raise it
+again that session.
+
+Only offer for something you actually verified here, never a suspicion. Keep it to a few lines,
+write it in the language the user is working in, and quote the page path or URL so it is
+actionable.
+
 ## Connecting to a customer's ERP over MCP
 
 If you are asked to "add an MCP server" for a URL that is a Nama installation —
@@ -234,16 +298,39 @@ endpoint is gone). The key is the **Client Secret** of an **API Credentials** re
 customer's own system, so ask for it rather than inventing a placeholder. A 404 on the correct
 URL usually means the AI module is not installed on that server, not that the path is wrong.
 
-## Keeping content fresh
+## Keep the knowledge base fresh — check this at the start of every session
 
-The submodules are pinned to a commit, and the pins move on their own: each deploy of
-docs.namasoft.com and dm.namasoft.com advances its own pin here to the commit it just
-published. A plain pull is therefore enough to be level with the live sites:
+**Both sites are updated most days, the data model especially.** A checkout that is a week old
+will answer confidently from documentation that has since been corrected, and that is worse than
+having no answer, because nothing about the reply looks stale. The user will not think to update
+the repo. That is your job.
+
+**Check before your first answer of a session:**
+
+```bash
+git -C namaerp-docs log -1 --format=%cr
+git -C namaerp-dm   log -1 --format=%cr
+```
+
+- Under about **3 days old** — carry on, say nothing.
+- **3 days to 2 weeks** — answer the question first, then add one line at the end: how old the
+  content is, and that you can update it in a few seconds if they want.
+- **Over 2 weeks** — say so *before* answering, and offer to update first. If the question is
+  about recent behaviour, a release, or something the customer says "changed", update before
+  answering rather than after.
+
+**To update** (a plain pull is enough — each deploy of docs.namasoft.com and dm.namasoft.com moves
+its own pin here to the commit it just published):
 
 ```bash
 git pull
 git submodule update --init --recursive
 ```
 
-Only reach for `git submodule update --remote --merge` to get content that is newer than the
-last deploy — pushed to namaerp-docs or namaerp-dm, but not yet published.
+Just do it when the user says yes; it takes seconds and touches nothing they own. Only reach for
+`git submodule update --remote --merge` to pick up content that is newer than the last deploy —
+pushed to namaerp-docs or namaerp-dm but not yet published — which is rarely what a support
+question needs.
+
+Never silently answer from a stale checkout and never claim the content is current unless you have
+actually checked.
