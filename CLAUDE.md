@@ -328,6 +328,63 @@ endpoint is gone). The key is the **Client Secret** of an **API Credentials** re
 customer's own system, so ask for it rather than inventing a placeholder. A 404 on the correct
 URL usually means the AI module is not installed on that server, not that the path is wrong.
 
+## When an MCP tool you need is missing — say so
+
+The tools a Nama MCP server exposes are exactly the lines on its **AI Tool Definition** record
+(`ai → Master Files → AI Tool Definition`, documented in
+`namaerp-docs/docs/modules/ai/ai-tool-definitions.md`). Administrators often add only some of them,
+so a connected server can lack the very tool the job calls for — the dashboard tools
+(`AITDashboardTools`) when building a dashboard, the report tools (`AITReportReadTools` /
+`AITUpdateReportTools`) when reading or fixing a report, the import tools when saving a record,
+the term and config tools when changing document configuration, and so on.
+
+**Do not quietly work around a missing tool** — by falling back to raw SQL, guessing a file's
+contents, or doing the job locally instead of in Nama. When the right tool is not in your tool
+list:
+
+1. Tell the user plainly which tool (or tool group) is missing and what it would let you do.
+2. Tell them how to add it: open the **AI Tool Definition** record the MCP connection uses, go to
+   the System Tool page, and press the matching **Add … Tools** button (or pick the
+   **Tool Class Name** from the suggestion list). Check `ai-tool-definitions.md` for the current
+   class and button names — the set grows with each release — rather than naming one from memory.
+3. **If the import tools are connected** (`<prefix>GetImportSchema` / `<prefix>ImportRecord`), offer
+   to add the missing lines to the AI Tool Definition yourself through them — then do it only once
+   the user agrees, because it changes the customer's configuration. After it is saved, the user
+   must reconnect the MCP server (`/mcp`) for the new tools to appear.
+
+## Dashboards are built inside Nama, not as local pages
+
+When a user asks for a "dashboard" — `داشبورد`, `لوحة معلومات`, "show me X as a dashboard" — they
+mean a **Nama BI dashboard** (`DashBoard` + `DashBoardWidget` records) that the customer opens in
+the ERP. **Do not** reach for the data, query it, and build a local HTML page, chart, or artifact.
+That is not what was asked for, and it leaves the customer with nothing in their system.
+
+Read the BI docs first — `namaerp-docs/docs/platform/bi/bi-module-guide.md`, the JSON reference
+`bi-module-technical-reference.md` and its companions (`bi-reference-*.md`) — then:
+
+- **A Nama MCP server is connected** → design and create the dashboard in that system through the
+  MCP, using the dashboard tools (`AITDashboardTools`, added by the **Add Report Tools** button —
+  see "Dashboard tools" in `ai-tool-definitions.md`):
+  - `<prefix>PreviewDashboardWidget` — try a widget's SQL / chart configuration and read back the
+    figures it would draw, without saving. Iterate here until the numbers are right.
+  - `<prefix>RunDashboardWidget` — run a saved widget and see the SQL it actually executed (with
+    cross filters and parameters applied); use it when a chart is empty or wrong.
+  - `<prefix>RunDashboard` — run the whole dashboard (or one tab) to check every widget at once.
+  - Save with `<prefix>ImportRecord` (schema from `<prefix>GetImportSchema` for `DashBoard` /
+    `DashBoardWidget`) only once the preview figures are right.
+
+  If `AITDashboardTools` is not on the server, follow the missing-tool rule above (say so, and
+  offer to add it via the import tools if those are connected) rather than saving widgets blind.
+- **No Nama MCP server is connected** → produce a **ready-to-import JSON file** for the dashboard
+  and its widgets, following the structure in the BI technical reference, and tell the user how to
+  import it into Nama.
+- **Nama is the default.** A plain "build a dashboard for X" means inside Nama — just do it. Only
+  when the request genuinely points both ways (it mentions a local file, a browser page, a one-off
+  look at the numbers) ask one direct question before doing any work: "Do you want this dashboard
+  built inside Nama, or as a local page?"
+
+A local HTML page or artifact is only right when the user explicitly asks for one.
+
 ## Keep the knowledge base fresh — check this at the start of every session
 
 **Both sites are updated most days, the data model especially.** A checkout that is a week old
