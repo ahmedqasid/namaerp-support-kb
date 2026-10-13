@@ -32,7 +32,7 @@ English screen or field name. Answer in the language they asked in. Arabic quest
 
 ## The two knowledge sources
 
-### 1. `namaerp-docs/docs/` — the user documentation (~1900 markdown files)
+### 1. `namaerp-docs/docs/` — the user documentation (~2400 markdown files)
 
 ```
 docs/
@@ -40,14 +40,13 @@ docs/
   modules/             20 functional modules (accounting, hr, supplychain, pos, ...) — 600 files
   platform/            cross-module features: approvals, screen modifier, security,
                        reports, BI, list views, import/export, entity flows, DMS  — 100 files
-  entity-flows/        generated reference for every entity flow, by module      — 249 files
+  entity-flows/        generated reference for every entity flow, by module      — 270 files
   admin/               troubleshooting, reprocessing (quantities/costs/ledger), DB utils
   integration/         Nama ERP API, attendance machines, invoice retriever, JDBC
+  release-notes/       monthly release notes by year (2016 onwards), English
   architecture/        application / infrastructure / security architecture
-  developer/           dev-request guidelines, GUI post actions FAQ
   videos/              video tutorial index
   ar/                  Arabic mirror of ALL of the above, same filenames
-  ar/release-notes/    per-year release notes — Arabic only, no English counterpart
 ```
 
 Two things to know:
@@ -55,8 +54,9 @@ Two things to know:
 - **`docs/ar/` is a full translation mirror.** `docs/modules/accounting/accounts.md` and
   `docs/ar/modules/accounting/accounts.md` are the same page. When you grep, this doubles every
   hit. Search one side deliberately (see below) instead of drowning in duplicates.
-- **Release notes exist only in Arabic**, under `docs/ar/release-notes/<year>/`. Use them for
-  "when was this feature added / did this change in a recent version" questions.
+- **Release notes exist in both languages**, one page per month:
+  `docs/release-notes/<year>/nama-erp-<yyyymm>-release-notes.md` and the same path under `docs/ar/`.
+  Use them for "when was this feature added / did this change in a recent version" questions.
 
 Pages are hand-written prose with real screenshots, `::: info` / `::: warning` callouts, and
 menu paths like **Accounting → Settings → Ledger**. Those menu paths are gold for support —
@@ -161,11 +161,13 @@ grep -i "depreciation" namaerp-docs/docs/public/llms.txt
 **Find an entity by name, English label, or Arabic label:**
 
 ```bash
-grep -i "salary item" namaerp-dm/docs/public/llms.txt        # fuzzy, one line per entity
-grep -l "بند الراتب" namaerp-dm/docs/public/dm-json/*.json    # exact label hit
+grep -i "salary component" namaerp-dm/docs/public/llms.txt   # fuzzy, one line per entity
+grep -l "مفرد راتب" namaerp-dm/docs/public/dm-json/*.json     # exact label hit
 ```
 
-Entity names are often **not** what you'd guess — the item master is `InvItem`, not `Item`.
+Entity names are often **not** what you'd guess — the item master is `InvItem`, not `Item`, and
+what a customer calls a "salary item" is `SalaryComponent` («مفرد راتب»). If the customer's word
+finds nothing, try the Arabic label or a synonym before concluding the entity doesn't exist.
 Always confirm a name against `llms.txt` or `index.json` before assuming the file exists.
 
 **Read an entity's schema** — always read the whole file, they are only ~20 KB:
