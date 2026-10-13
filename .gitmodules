@@ -1,6 +1,6 @@
 [submodule "namaerp-dm"]
 	path = namaerp-dm
-	url = https://github.com/ahmedqasid/namaerp-dm.git
+	url = https://github.com/namasoft/namaerp-dm.git
 [submodule "namaerp-docs"]
 	path = namaerp-docs
-	url = https://github.com/ahmedqasid/namaerp-docs.git
+	url = https://github.com/namasoft/namaerp-docs.git

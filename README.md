@@ -14,7 +14,7 @@ Clone **with submodules** — the `--recurse-submodules` flag is required, other
 folders come down empty:
 
 ```bash
-git clone --recurse-submodules https://github.com/ahmedqasid/namaerp-support-kb.git
+git clone --recurse-submodules https://github.com/namasoft/namaerp-support-kb.git
 cd namaerp-support-kb
 ```
 
